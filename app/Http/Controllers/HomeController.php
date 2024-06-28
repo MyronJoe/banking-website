@@ -174,6 +174,8 @@ class HomeController extends Controller
         // $acc_num = $request->acc_number;
         $acc_number =  User::where('acc_number', $request->acc_number)->where('status', 0)->exists();
 
+        $blocked =  User::where('acc_number', $request->acc_number)->where('status', 2)->exists();
+
         $acc_number1 =  User::where('acc_number', $request->acc_number)->first();
 
         // dd($acc_number1->fname);
@@ -188,6 +190,16 @@ class HomeController extends Controller
             $request->session()->regenerateToken();
 
             return redirect()->route('login')->with('error', 'Dear Custormer we need more information to activate your account, please contact support');
+
+        }else if ($blocked) {
+            Auth::logout();
+
+            $request->session()->invalidate();
+
+            $request->session()->regenerateToken();
+
+            return redirect()->route('login')->with('error', 'Account has been suspended for unusual login, contact support');
+            
         } else {
             $credentials = $request->only('acc_number', 'password');
             if (Auth::attempt($credentials)) {

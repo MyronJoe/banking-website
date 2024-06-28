@@ -137,7 +137,7 @@ class AdminController extends Controller
 
         $user = User::findOrFail($id);
 
-        $user->status = 0;
+        $user->status = 2;
 
         $user->save();
 
